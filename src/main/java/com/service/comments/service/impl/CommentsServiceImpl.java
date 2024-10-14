@@ -54,7 +54,7 @@ public class CommentsServiceImpl implements CommentsService {
       throws CommentNotFoundException, InvalidReactionTypeException {
     String reactType = reactRequestDto.getReactType();
     Reaction likeDislike = new Reaction();
-    CommentServiceValidator.validateReactionType(reactType);
+    commentServiceValidator.validateReactionType(reactType);
     commentServiceValidator.validateCommentId(commentId);
     likeDislike.setReactionType(reactRequestDto.getReactType());
     likeDislike.setCommentId(commentId);
@@ -74,7 +74,7 @@ public class CommentsServiceImpl implements CommentsService {
   }
 
   public List<User> getUsersWrtReactType(Long commentId, String reactType) {
-    CommentServiceValidator.validateReactionType(reactType);
+    commentServiceValidator.validateReactionType(reactType);
     return userRepository.findUsersByReactionAndCommentId(reactType, commentId);
   }
 }

@@ -23,7 +23,7 @@ public class CommentServiceValidator {
     }
   }
 
-  public static void validateReactionType(String reactType) {
+  public void validateReactionType(String reactType) {
     boolean isValid = false;
     for (ReactType value : ReactType.values()) {
       if (value.name().equals(reactType.toUpperCase())) {

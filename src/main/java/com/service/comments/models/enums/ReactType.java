@@ -8,7 +8,7 @@ public enum ReactType {
   ReactType(String value) {
     this.value = value;
   }
-  
+
   public String getValue() {
     return value;
   }

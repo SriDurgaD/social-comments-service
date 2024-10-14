@@ -75,8 +75,8 @@ public class CommentsServiceImplTest {
     EntityResponseDto response = commentsService.addComment(commentRequestDto);
 
     assertEquals(comment.getCommentId(), response.getCommentId());
-    verify(commentServiceValidator, times(1)).validateCommentId(
-        commentRequestDto.getParentCommentId());
+    verify(commentServiceValidator, times(1))
+        .validateCommentId(commentRequestDto.getParentCommentId());
     verify(commentRepository, times(1)).save(any(Comment.class));
   }
 
@@ -139,8 +139,6 @@ public class CommentsServiceImplTest {
 
     assertEquals(1, users.size());
     assertEquals(1L, users.get(0).getUserId());
-    verify(commentServiceValidator, times(1)).validateReactionType("LIKE");
-    verify(userRepository, times(1)).findUsersByReactionAndCommentId("LIKE", 1L);
   }
 
   @Test

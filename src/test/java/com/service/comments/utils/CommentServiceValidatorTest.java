@@ -30,16 +30,6 @@ public class CommentServiceValidatorTest {
   private final Long VALID_COMMENT_ID = 1L;
   private final Long INVALID_COMMENT_ID = 99L;
 
-//  @BeforeEach
-//  public void setup() {
-//    // Mocking the repository behavior for a valid comment ID
-//    when(commentRepository.findByParentCommentId(VALID_COMMENT_ID))
-//        .thenReturn(List.of(new Comment()));
-//    // Mocking the repository behavior for an invalid comment ID
-//    when(commentRepository.findByParentCommentId(INVALID_COMMENT_ID))
-//        .thenReturn(Collections.emptyList());
-//  }
-
   @Test
   public void testValidateCommentId_ShouldNotThrowException_WhenCommentExists() {
     when(commentRepository.findByParentCommentId(VALID_COMMENT_ID))
@@ -57,20 +47,20 @@ public class CommentServiceValidatorTest {
   @Test
   public void testValidateReactionType_ShouldNotThrowException_WhenValidReactType() {
     // Test with a valid reaction type
-    CommentServiceValidator.validateReactionType("LIKE");
+    commentServiceValidator.validateReactionType("LIKE");
   }
 
   @Test
   public void testValidateReactionType_ShouldThrowInvalidReactionTypeException_WhenInvalidReactType() {
     // Test with an invalid reaction type
     assertThrows(InvalidReactionTypeException.class, () -> {
-      CommentServiceValidator.validateReactionType("INVALID_TYPE");
+      commentServiceValidator.validateReactionType("INVALID_TYPE");
     });
   }
 
   @Test
   public void testValidateReactionType_ShouldBeCaseInsensitive_WhenValidReactType() {
     // Test with a valid reaction type in lowercase
-    CommentServiceValidator.validateReactionType("like");
+    commentServiceValidator.validateReactionType("like");
   }
 }
