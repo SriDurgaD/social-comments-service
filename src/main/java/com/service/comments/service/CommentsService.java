@@ -1,5 +1,6 @@
 package com.service.comments.service;
 
+import com.service.comments.dto.CommentResponse;
 import com.service.comments.dto.request.CommentRequestDto;
 import com.service.comments.dto.EntityResponseDto;
 import com.service.comments.dto.request.ReactRequestDto;
@@ -16,7 +17,7 @@ public interface CommentsService {
 
   public void addReact(Long commentId, ReactRequestDto reactRequestDto);
 
-  public List<Comment> getRepliesForComments(Long parentCommentId, int page, int size);
+  public CommentResponse getComments(Long parentCommentId, int page, int size);
 
   public List<User> getUsersWrtReactType(Long commentId, String reactType);
 

@@ -1,5 +1,6 @@
 package com.service.comments.controller;
 
+import com.service.comments.dto.CommentResponse;
 import com.service.comments.dto.request.CommentRequestDto;
 import com.service.comments.dto.EntityResponseDto;
 import com.service.comments.dto.request.ReactRequestDto;
@@ -32,18 +33,18 @@ public class CommentsController {
   }
 
   @PutMapping("/{commentId}/react")
-  public ResponseDto<String> reactOnPost(@PathVariable Long commentId,
+  public ResponseDto<String> react(@PathVariable Long commentId,
       @RequestBody ReactRequestDto reactRequestDto) {
     commentsService.addReact(commentId, reactRequestDto);
     return new ResponseDto<>("Reacted to Comment");
   }
 
   @GetMapping()
-  public ResponseDto<List<Comment>> getRepliesForComments(
+  public ResponseDto<CommentResponse> getComments(
       @RequestParam(required = false) Long parentCommentId,
       @RequestParam(value = "pageSize", defaultValue = "10", required = false) int size,
       @RequestParam(value = "pageNo", defaultValue = "0", required = false) int page) {
-    return new ResponseDto<>(commentsService.getRepliesForComments(parentCommentId, page, size));
+    return new ResponseDto<>(commentsService.getComments(parentCommentId, page, size));
   }
 
   @GetMapping("/{commentId}/react/{reactType}/users")

@@ -9,4 +9,6 @@ import java.util.List;
 
 public interface ReactRepository extends JpaRepository<Reaction, Long> {
 
+  Reaction findByUserIdAndCommentId(Long userId, Long commentId);
+
 }

@@ -1,5 +1,6 @@
 package com.service.comments.service.impl;
 
+import com.service.comments.dto.CommentResponse;
 import com.service.comments.dto.request.CommentRequestDto;
 import com.service.comments.dto.EntityResponseDto;
 import com.service.comments.dto.request.ReactRequestDto;
@@ -8,13 +9,13 @@ import com.service.comments.exception.custom.InvalidReactionTypeException;
 import com.service.comments.models.Comment;
 import com.service.comments.models.Reaction;
 import com.service.comments.models.User;
-import com.service.comments.models.enums.ReactType;
 import com.service.comments.repository.CommentRepository;
 import com.service.comments.repository.ReactRepository;
 import com.service.comments.repository.UserRepository;
 import com.service.comments.service.CommentsService;
 import com.service.comments.utils.CommentServiceValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,9 +30,9 @@ public class CommentsServiceImpl implements CommentsService {
   @Autowired
   private ReactRepository reactRepository;
   @Autowired
-  UserRepository userRepository;
+  private UserRepository userRepository;
   @Autowired
-  CommentServiceValidator commentServiceValidator;
+  private CommentServiceValidator commentServiceValidator;
 
   public EntityResponseDto addComment(CommentRequestDto commentRequestDt)
       throws CommentNotFoundException {
@@ -54,23 +55,35 @@ public class CommentsServiceImpl implements CommentsService {
       throws CommentNotFoundException, InvalidReactionTypeException {
     String reactType = reactRequestDto.getReactType();
     Reaction likeDislike = new Reaction();
+    Long userId = reactRequestDto.getUserId();
     commentServiceValidator.validateReactionType(reactType);
     commentServiceValidator.validateCommentId(commentId);
     likeDislike.setReactionType(reactRequestDto.getReactType());
     likeDislike.setCommentId(commentId);
-    likeDislike.setUserId(reactRequestDto.getUserId());
-    reactRepository.save(likeDislike);
+    likeDislike.setUserId(userId);
+    Reaction userReaction = reactRepository.findByUserIdAndCommentId(userId, commentId);
+    if (userReaction == null) {
+      reactRepository.save(likeDislike);
+    } else {
+      userReaction.setReactionType(reactType);
+      reactRepository.save(userReaction);
+    }
   }
 
-  public List<Comment> getRepliesForComments(Long parentCommentId, int page, int size)
+  public CommentResponse getComments(Long parentCommentId, int page, int size)
       throws CommentNotFoundException {
     Pageable pageable = PageRequest.of(page, size);
+    CommentResponse response = new CommentResponse();
+    Page<Comment> data;
     if (parentCommentId == null) {
-      return commentRepository.findByParentCommentIdIsNull(pageable);
+      data = commentRepository.findByParentCommentIdIsNull(pageable);
     } else {
       commentServiceValidator.validateCommentId(parentCommentId);
-      return commentRepository.findByParentCommentId(parentCommentId, pageable);
+      data = commentRepository.findByParentCommentId(parentCommentId, pageable);
     }
+    response.setComments(data.getContent());
+    response.setTotalCount(data.getTotalPages());
+    return response;
   }
 
   public List<User> getUsersWrtReactType(Long commentId, String reactType) {

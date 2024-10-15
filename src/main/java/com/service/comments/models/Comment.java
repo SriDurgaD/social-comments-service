@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.GenerationTime;
 
 import java.io.Serializable;
@@ -25,13 +26,15 @@ public class Comment implements Serializable {
   private Timestamp commentedTime;
   private Long parentCommentId;
 
-  @OneToMany(mappedBy = "parentCommentId", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Comment> replies = new ArrayList<>();
-
-  @OneToMany(mappedBy = "commentId", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Reaction> reactions = new ArrayList<>();
-
   @ManyToOne
   @JoinColumn(name = "user_id")
   private User user;
+
+  @Column(insertable = false, updatable = false)
+  private int repliesCount;
+  @Column(insertable = false, updatable = false)
+  private int likesCount;
+  @Column(insertable = false, updatable = false)
+  private int dislikesCount;
+
 }
