@@ -18,11 +18,12 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
       + "Count(Child.comment_id) As replies_count "
       + "From comments As Parent Left Join comments As Child On Parent.comment_id = Child.parent_comment_id "
       + "where Parent.parent_comment_id is NULL " + "GROUP by comment_id "
-      + ") k left join Reactions r on  k.comment_id = r.comment_id " + "group by comment_id",
+      + ") k left join Reactions r on  k.comment_id = r.comment_id "
+      + "group by comment_id order by commented_time	desc",
       countQuery = """
           select count(p.comment_id)
           from Comments p
-          where p.comment_id is NULL
+          where p.parent_comment_id is NULL
           """, nativeQuery = true)
   Page<Comment> findByParentCommentIdIsNull(Pageable pageable);
 
@@ -33,11 +34,12 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
       + "Count(Child.comment_id) As replies_count "
       + "From comments As Parent Left Join comments As Child On Parent.comment_id = Child.parent_comment_id "
       + "where Parent.parent_comment_id=:parentCommentId " + "GROUP by comment_id "
-      + ") k left join Reactions r on  k.comment_id = r.comment_id " + "group by comment_id",
+      + ") k left join Reactions r on  k.comment_id = r.comment_id " + "group by comment_id "
+      + "order by commented_time	desc",
       countQuery = """
           select count(p.comment_id)
           from Comments p
-          where p.comment_id=:parentCommentId
+          where p.parent_comment_id=:parentCommentId
           """, nativeQuery = true)
   Page<Comment> findByParentCommentId(Long parentCommentId, Pageable pageable);
 
@@ -70,6 +72,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
           	k.comment_id = r.comment_id
           group by
           	comment_id
+          order by commented_time	desc
           """,
       nativeQuery = true)
   List<Comment> findByParentCommentId(Long parentCommentId);
